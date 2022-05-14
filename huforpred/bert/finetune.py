@@ -10,8 +10,13 @@ from datasets import load_metric
 import numpy as np
 from pathlib import Path
 import os
+import argparse
 
-training_data_path = Path("../../data/training")
+parser = argparse.ArgumentParser()
+parser.add_argument('datapath', type=Path)
+args = parser.parse_args()
+
+training_data_path = args.datapath
 
 labeled_data = datasets.Dataset.from_parquet(
     {

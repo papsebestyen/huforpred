@@ -13,7 +13,7 @@ import os
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('datapath', type=Path)
+parser.add_argument("datapath", type=Path)
 args = parser.parse_args()
 
 training_data_path = args.datapath
@@ -26,11 +26,13 @@ labeled_data = datasets.Dataset.from_parquet(
     features=datasets.Features(
         {"text": datasets.Value("string"), "label": datasets.ClassLabel(num_classes=2)}
     ),
-)
+).to("pt")
 
 hugging_face_model = "NYTK/sentiment-hts2-hubert-hungarian"
-tokenizer = AutoTokenizer.from_pretrained(hugging_face_model)
-model = BertForSequenceClassification.from_pretrained(hugging_face_model, num_labels=2)
+tokenizer = AutoTokenizer.from_pretrained(hugging_face_model).to("cuda")
+model = BertForSequenceClassification.from_pretrained(
+    hugging_face_model, num_labels=2
+).to("cuda")
 
 
 def preprocess_function(examples):
@@ -54,7 +56,7 @@ def compute_metrics(eval_pred):
 
 
 training_args = TrainingArguments(
-    'papsebestyen/fin-hubert',
+    "papsebestyen/fin-hubert",
     # output_dir="./results2",
     learning_rate=2e-6,
     evaluation_strategy="epoch",
@@ -67,10 +69,10 @@ training_args = TrainingArguments(
     metric_for_best_model="accuracy",
     dataloader_num_workers=40,
     no_cuda=True,
-    hub_model_id  = 'papsebestyen/fin-hubert',
+    hub_model_id="papsebestyen/fin-hubert",
     push_to_hub=True,
-    hub_token = os.environ['HUGGINGFACE_TOKEN'],
-    hub_private_repo =True
+    hub_token=os.environ["HUGGINGFACE_TOKEN"],
+    hub_private_repo=True,
 )
 
 trainer = Trainer(

@@ -26,13 +26,13 @@ labeled_data = datasets.Dataset.from_parquet(
     features=datasets.Features(
         {"text": datasets.Value("string"), "label": datasets.ClassLabel(num_classes=2)}
     ),
-).to("pt")
+)
 
 hugging_face_model = "NYTK/sentiment-hts2-hubert-hungarian"
-tokenizer = AutoTokenizer.from_pretrained(hugging_face_model).to("cuda")
+tokenizer = AutoTokenizer.from_pretrained(hugging_face_model)
 model = BertForSequenceClassification.from_pretrained(
     hugging_face_model, num_labels=2
-).to("cuda")
+)
 
 
 def preprocess_function(examples):

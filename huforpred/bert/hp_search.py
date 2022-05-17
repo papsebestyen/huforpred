@@ -30,8 +30,8 @@ def tune_transformer(
 
     labeled_data = datasets.Dataset.from_parquet(
         {
-            "train": (data_dir / "labelled_train.parquet").as_posix(),
-            "test": (data_dir / "labelled_test.parquet").as_posix(),
+            "train": (data_dir / "labelled_train_sebi.parquet").as_posix(),
+            "test": (data_dir / "labelled_test_sebi.parquet").as_posix(),
         },
         features=datasets.Features(
             {

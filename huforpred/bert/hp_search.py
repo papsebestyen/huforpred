@@ -97,6 +97,8 @@ def tune_transformer(
         logging_dir="./logs",
         skip_memory_metrics=True,
         report_to="none",
+        auto_find_batch_size = True,
+        fp16=True,
     )
 
     trainer = Trainer(
@@ -105,6 +107,8 @@ def tune_transformer(
         train_dataset=tokenized_data["train"],
         eval_dataset=tokenized_data["test"],
         compute_metrics=compute_metrics,
+        tokenizer = tokenizer,
+        data_collator=data_collator,
     )
 
     tune_config = {

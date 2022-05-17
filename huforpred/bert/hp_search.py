@@ -25,7 +25,7 @@ def tune_transformer(
     smoke_test=False,
     num_labels=2,
     task_name="sentiment-analysis",
-    model_name="NYTK/sentiment-hts2-hubert-hungarian",
+    model_name="SZTAKI-HLT/hubert-base-cc",
 ):
 
     labeled_data = datasets.Dataset.from_parquet(

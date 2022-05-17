@@ -28,7 +28,7 @@ labeled_data = datasets.Dataset.from_parquet(
     ),
 )
 
-hugging_face_model = "NYTK/sentiment-hts2-hubert-hungarian"
+hugging_face_model = "SZTAKI-HLT/hubert-base-cc"
 tokenizer = AutoTokenizer.from_pretrained(hugging_face_model)
 model = BertForSequenceClassification.from_pretrained(
     hugging_face_model, num_labels=2

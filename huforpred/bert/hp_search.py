@@ -15,7 +15,6 @@ import pickle
 from pathlib import Path
 from datasets import load_metric
 import numpy as np
-from transformers import EvalPrediction
 
 
 def tune_transformer(
@@ -72,10 +71,13 @@ def tune_transformer(
 
     data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
 
-    def compute_metrics(p: EvalPrediction):
-        preds = p.predictions[0] if isinstance(p.predictions, tuple) else p.predictions
-        preds = np.argmax(preds, axis=1)
-        return {"accuracy": (preds == p.label_ids).astype(np.float32).mean().item()}
+    metric = load_metric("accuracy")
+
+    def compute_metrics(eval_pred):
+        logits, labels = eval_pred
+        predictions = np.argmax(logits, axis=-1)
+        acc = metric.compute(predictions=predictions, references=labels)
+        return acc
 
     training_args = TrainingArguments(
         output_dir=".",
@@ -95,7 +97,7 @@ def tune_transformer(
         logging_dir="./logs",
         skip_memory_metrics=True,
         report_to="none",
-        auto_find_batch_size=True,
+        auto_find_batch_size = True,
         fp16=True,
         disable_tqdm=True,
     )
@@ -106,7 +108,7 @@ def tune_transformer(
         train_dataset=tokenized_data["train"],
         eval_dataset=tokenized_data["test"],
         compute_metrics=compute_metrics,
-        tokenizer=tokenizer,
+        tokenizer = tokenizer,
         data_collator=data_collator,
     )
 
@@ -119,7 +121,7 @@ def tune_transformer(
 
     scheduler = PopulationBasedTraining(
         time_attr="training_iteration",
-        metric="eval_acc",
+        metric="eval_accuracy",
         mode="max",
         perturbation_interval=1,
         hyperparam_mutations={
@@ -136,7 +138,7 @@ def tune_transformer(
             "per_device_train_batch_size": "train_bs/gpu",
             "num_train_epochs": "num_epochs",
         },
-        metric_columns=["accuracy"],
+        metric_columns=["eval_accuracy", "eval_loss", "epoch", "training_iteration"],
     )
 
     best_run = trainer.hyperparameter_search(
@@ -153,7 +155,7 @@ def tune_transformer(
         name="tune_transformer_pbt",
         log_to_file=True,
     )
-
+    
     out_dir.write_bytes(pickle.dumps(best_run))
 
 

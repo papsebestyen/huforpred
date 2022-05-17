@@ -163,8 +163,8 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("data-path", type=Path)
-    parser.add_argument("out-path", type=Path)
+    parser.add_argument("datapath", type=Path)
+    parser.add_argument("outpath", type=Path)
 
     parser.add_argument(
         "--smoke-test", action="store_true", help="Finish quickly for testing"
@@ -194,8 +194,8 @@ if __name__ == "__main__":
 
     if args.smoke_test:
         tune_transformer(
-            data_dir=args.data_path,
-            out_dir=args.out_path,
+            data_dir=args.datapath,
+            out_dir=args.outpath,
             num_samples=1,
             gpus_per_trial=0,
             smoke_test=True,
@@ -203,8 +203,8 @@ if __name__ == "__main__":
     else:
         # You can change the number of GPUs here:
         tune_transformer(
-            data_dir=args.data_path,
-            out_dir=args.out_path,
+            data_dir=args.datapath,
+            out_dir=args.outpath,
             num_samples=8,
             gpus_per_trial=1,
         )

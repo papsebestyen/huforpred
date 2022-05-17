@@ -10,9 +10,13 @@ from transformers import (
     TrainingArguments,
 )
 import datasets
+import pickle
+from pathlib import Path
 
 
 def tune_transformer(
+    data_dir,
+    out_dir,
     num_samples=8,
     gpus_per_trial=0,
     smoke_test=False,
@@ -20,7 +24,6 @@ def tune_transformer(
     task_name="sentiment-analysis",
     model_name="NYTK/sentiment-hts2-hubert-hungarian",
 ):
-    data_dir = args.datapath
 
     labeled_data = datasets.Dataset.from_parquet(
         {
@@ -130,7 +133,7 @@ def tune_transformer(
         metric_columns=["eval_acc", "eval_loss", "epoch", "training_iteration"],
     )
 
-    trainer.hyperparameter_search(
+    best_run = trainer.hyperparameter_search(
         hp_space=lambda _: tune_config,
         backend="ray",
         n_trials=num_samples,
@@ -144,12 +147,18 @@ def tune_transformer(
         name="tune_transformer_pbt",
         log_to_file=True,
     )
+    
+    out_dir.write_bytes(pickle.dumps(best_run))
 
 
 if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser()
+
+    parser.add_argument("data-path", type=Path)
+    parser.add_argument("out-path", type=Path)
+
     parser.add_argument(
         "--smoke-test", action="store_true", help="Finish quickly for testing"
     )
@@ -177,7 +186,18 @@ if __name__ == "__main__":
         ray.init(args.ray_address)
 
     if args.smoke_test:
-        tune_transformer(num_samples=1, gpus_per_trial=0, smoke_test=True)
+        tune_transformer(
+            data_dir=args.data_path,
+            out_dir=args.out_path,
+            num_samples=1,
+            gpus_per_trial=0,
+            smoke_test=True,
+        )
     else:
         # You can change the number of GPUs here:
-        tune_transformer(num_samples=8, gpus_per_trial=1)
+        tune_transformer(
+            data_dir=args.data_path,
+            out_dir=args.out_path,
+            num_samples=8,
+            gpus_per_trial=1,
+        )

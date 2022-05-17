@@ -56,21 +56,23 @@ def compute_metrics(eval_pred):
 
 
 training_args = TrainingArguments(
-    "papsebestyen/fin-hubert",
-    # output_dir="./results2",
+    # "papsebestyen/fin-hubert",
+    output_dir="./results2",
     learning_rate=2e-6,
     evaluation_strategy="epoch",
     save_strategy="epoch",
-    per_device_train_batch_size=16,
-    per_device_eval_batch_size=16,
-    num_train_epochs=3,
+    per_device_train_batch_size=64,
+    per_device_eval_batch_size=64,
+    num_train_epochs=20,
     weight_decay=0.01,
-    load_best_model_at_end=True,
-    metric_for_best_model="accuracy",
-    hub_model_id="papsebestyen/fin-hubert",
-    push_to_hub=True,
-    hub_token=os.environ["HUGGINGFACE_TOKEN"],
-    hub_private_repo=True,
+    # load_best_model_at_end=True,
+    # metric_for_best_model="accuracy",
+    auto_find_batch_size = True,
+    fp16=True,
+    # hub_model_id="papsebestyen/fin-hubert",
+    # push_to_hub=True,
+    # hub_token=os.environ["HUGGINGFACE_TOKEN"],
+    # hub_private_repo=True,
 )
 
 trainer = Trainer(

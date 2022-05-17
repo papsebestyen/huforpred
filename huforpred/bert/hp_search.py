@@ -99,6 +99,7 @@ def tune_transformer(
         report_to="none",
         auto_find_batch_size = True,
         fp16=True,
+        disable_tqdm=True,
     )
 
     trainer = Trainer(

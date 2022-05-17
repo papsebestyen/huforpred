@@ -137,7 +137,7 @@ def tune_transformer(
             "per_device_train_batch_size": "train_bs/gpu",
             "num_train_epochs": "num_epochs",
         },
-        metric_columns=["eval_acc", "eval_loss", "epoch", "training_iteration"],
+        metric_columns=["accuracy"],
     )
 
     best_run = trainer.hyperparameter_search(

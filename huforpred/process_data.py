@@ -3,14 +3,14 @@ import pandas as pd
 
 url_regex = r"(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})"
 
-df_topics = pd.read_parquet(Path('../data/raw/topics.parquet'))
+df_topics = pd.read_parquet(Path('data/raw/topics.parquet'))
 
 bet_threads = df_topics[lambda _df: _df['topic'] == 'bét'].index
 
 df_messages = (
     pd.concat(
         [
-            pd.read_parquet(Path(f"../data/raw/messages/{thread}.parquet")).assign(
+            pd.read_parquet(Path(f"data/raw/messages/{thread}.parquet")).assign(
                 thread_id=thread
             )
             for thread in bet_threads
@@ -33,4 +33,4 @@ df_messages = (
     .set_index("comment_id", drop=False)
 )
 
-df_messages.to_parquet(Path('../data/processed/processed_msg.parquet'))
+df_messages.to_parquet(Path('data/processed/processed_msg.parquet'))
